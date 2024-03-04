@@ -1,0 +1,30 @@
+{% extends "base.html" %}
+
+
+{% block content %}
+<br>
+<div class="p-3 text-primary-emphasis bg-primary-subtle border border-primary-subtle rounded-3">
+    <h1> The Account Balance is : </h1>
+     <h1>  {{ account.transaction }} Euros</h1>
+</div>
+<br>
+<hr>
+
+<table class="table table-hover text-center">
+  <thead>
+    <tr>
+      <th scope="col">Items: </th>
+      <th scope="col">Quantity: </th>
+    </tr>
+  </thead>
+  <tbody>
+  {% for item_name in inventory %}
+   <tr>
+       <td> {{ item_name.item }} </td>
+       <td> {{ item_name.stock }} </td>
+   </tr>
+  {% endfor %}
+  </tbody>
+</table>
+
+{% endblock %}

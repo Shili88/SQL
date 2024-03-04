@@ -1,0 +1,39 @@
+{% extends "base.html" %}
+
+{% block content %}
+
+<style>
+  h1{
+    text-align: center;
+  }
+  body {background-color: rgb(198, 220, 228);}
+  p {color: rgb(17, 17, 17);
+  font-family: "Arial, sans-serif";
+  text-align: center;}
+</style>
+
+<h1><strong> Balance </strong></h1>
+
+<hr>
+
+{% for msg in get_flashed_messages() %}
+    <h2> {{ msg }} </h2>
+{% endfor %}
+
+<hr>
+
+<div class="container container-fluid text-center">
+  <form method="post" action="{{ url_for('balance') }}">
+    <div class="mb-3">
+      <label for="balance_action" class="form-label">add or subtract:</label>
+      <input type="text" class="form-control" id="text" name="balance_action">
+    </div>
+    <div class="mb-3">
+      <label for="amount" class="form-label">Amount:</label>
+      <input type="number" class="form-control" id="number" name="amount">
+    </div>
+    <button type="submit" class="btn btn-primary">Submit</button>
+  </form>
+</div>
+
+{% endblock%}
