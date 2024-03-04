@@ -1,0 +1,69 @@
+@app.route("/purchase/", methods=["get", "post"])
+def purchase ():
+    if request.method == "POST":
+        item_name = request.form["item_name"]
+        item_quantity = int(request.form["item_quantity"])
+        item_price = int(request.form["price"])
+        purchase = item_quantity * item_price
+
+        account = db.session.query(Account).first()
+        inventory = db.session.query(Inventory).all()
+    
+        if account.transaction > purchase:
+            account.transaction -= purchase
+            stock = db.session.query(Inventory).filter(Inventory.ietm == item_name).first()
+            new_history = History(history_entry=f"Purchasing {item_name} cost {purchase} euros. Brought {item_quantity} ")
+            flash(f"Bought {item_name} with quantity {item_quantity} into the inventory. Total cost is {purchase}")
+
+            if item_name not in inventory:
+                stock = item_quantity
+                purchase_item = Inventory(
+                    item=item_name, 
+                    stock=stock, 
+                    price=item_price
+                    )
+            else:
+                stock.quntity += item_quantity
+            flash(f"Purchase{item_name} succesfully!")
+        
+            db.session.add(stock)
+            db.session.add(account)
+            db.session.add(new_history)
+            db.session.commit()
+
+        else:
+            flash ("No enough balance in the account!")
+
+        return redirect(url_for("index"))
+    return render_template ("purchase.html")
+
+
+
+
+@app.route("/sale", methods=["get", "post"])
+def sale ():
+    if request.method == "POST":
+        item_name = request.form["item_name"]
+        item_quantity = int(request.form["item_quantity"])
+        item_price = int(request.form["price"])
+        sale = item_quantity * item_price
+
+        stock = db.session.query(Inventory).filter(Inventory.ietm == item_name).first()
+
+        if item_name in stock:
+            stock.quantity -= item_quantity
+            account.transaction += sale
+            flash(f'Sell {item_name} {item_quantity} with total amount {sale} successfully!')
+
+            new_history = History(history_entry=f"Sold {item_name} with sale {sale} euros. {item_quantity} deduct from inventory")
+
+            db.session.add(stock)
+            db.session.add(account)
+            db.session.add(new_history)
+            db.session.commit()
+        
+        else:
+            flash (f"The item {item_name} currently is not available.")
+        
+        return redirect(url_for("index"))
+    return render_template ("sale.html")
